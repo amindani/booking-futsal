@@ -48,3 +48,37 @@ Project memakai tabel `courts`, `profiles`, dan `bookings` serta kebijakan Row L
 - Pembayaran online belum tersedia.
 - Dashboard admin belum dimigrasikan pada tahap ini.
 - Sebelum dipakai produksi, validasi jadwal dan total harga harus dipindahkan ke fungsi/database server-side.
+
+
+## Pembaruan: booking publik dan pembayaran otomatis
+
+Fitur yang ditambahkan pada branch `feature/react-migration`:
+- Pemesanan dapat dilakukan tanpa login menggunakan nama dan nomor WhatsApp.
+- Checkout menggunakan Midtrans Snap.
+- Status transaksi hanya menjadi `paid` / booking `confirmed` setelah webhook Midtrans dengan signature valid diterima.
+- Admin dapat melihat booking dan status pembayaran, mengelola data lapangan, mengubah foto melalui URL gambar, serta mengatur status operasional lapangan.
+- Endpoint pemeriksaan status transaksi tidak membuka daftar booking publik.
+
+### Persiapan Supabase
+
+1. Jalankan `supabase/setup-online-booking.sql` di Supabase SQL Editor. Migrasi database ini sudah diterapkan pada project yang terhubung.
+2. Tiga Edge Functions sudah dideploy ke project Supabase:
+   - `create-midtrans-payment`
+   - `midtrans-webhook`
+   - `check-payment-status`
+
+### Konfigurasi Midtrans yang masih diperlukan
+
+Ikuti `supabase/MIDTRANS-SETUP.md`. Masukkan Server Key dan Signature Secret Key Sandbox di Supabase Dashboard > Edge Functions > Secrets. Jangan pernah menyimpan key tersebut di Vite `.env`, frontend, atau GitHub.
+
+Atur Payment Notification URL di dashboard Midtrans:
+`https://vbearvrnbsaupwcvvqck.supabase.co/functions/v1/midtrans-webhook`
+
+Gunakan Sandbox untuk seluruh pengujian sebelum mengaktifkan mode Production.
+
+### Catatan deployment
+
+- Pastikan Vercel melakukan deployment dari branch `feature/react-migration` untuk mencoba perubahan ini.
+- Akun admin harus memiliki klaim `app_metadata.role = admin`; jangan menggunakan `user_metadata` untuk otorisasi admin.
+- Pastikan akun admin sudah tersedia dan policy RLS admin yang ada tetap aktif.
+- Jalankan `npm install` lalu `npm run build` sebelum deployment.
