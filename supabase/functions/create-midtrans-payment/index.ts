@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
     }
 
     const { data: existing, error: conflictError } = await db.from("bookings")
-      .select("id,start_time,duration_hours")
+      .select("id,start_time,duration_hours,status")
       .eq("court_id", court_id).eq("booking_date", booking_date)
       .in("status", ["pending", "confirmed"]);
     if (conflictError) throw conflictError;
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
         transaction_details: { order_id: orderId, gross_amount: total },
         item_details: [{ id: String(court.id), price: Number(court.price_per_hour), quantity: duration, name: String(court.name).slice(0, 50) }],
         customer_details: { first_name: String(customer_name).trim().slice(0, 50), phone: String(customer_phone).trim() },
-        callbacks: { finish: Deno.env.get("PAYMENT_FINISH_URL") || "https://example.com/payment-finish" },
+        callbacks: { finish: Deno.env.get("PAYMENT_FINISH_URL") || ((req.headers.get("origin") || "https://lapanganin.vercel.app") + "/?payment=finish") },
       }),
     });
     const snap = await response.json();
