@@ -7,7 +7,7 @@ export default function CourtCard({ court, onBook }) {
     <article className="court-card">
       <div className="court-image">
         <img src={court.image_url || "https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=900&q=80"} alt={court.name} />
-        <span className="court-tag">{court.surface}</span>
+        <span className="court-tag">{court.surface}</span>{court.operational_status && court.operational_status !== "available" && <span className="court-state">{court.operational_status === "occupied" ? "Sedang dipakai" : "Perawatan"}</span>}
       </div>
       <div className="court-body">
         <h3>{court.name}</h3>
@@ -16,7 +16,7 @@ export default function CourtCard({ court, onBook }) {
         <div className="court-meta"><span><Clock size={13} /> {String(court.opening_time).slice(0, 5)} – {String(court.closing_time).slice(0, 5)}</span></div>
         <div className="court-bottom">
           <div className="price"><strong>{money(court.price_per_hour)}</strong><small> / jam</small></div>
-          <button className="book-btn" onClick={() => onBook(court)}>Pilih jadwal <ArrowUpRight size={14} /></button>
+          <button className="book-btn" disabled={court.operational_status && court.operational_status !== "available"} onClick={() => onBook(court)}>{court.operational_status === "occupied" ? "Sedang dipakai" : court.operational_status === "maintenance" ? "Perawatan" : <>Pilih jadwal <ArrowUpRight size={14} /></>}</button>
         </div>
       </div>
     </article>
