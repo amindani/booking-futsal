@@ -9,12 +9,12 @@ Deno.serve(async req=>{
   if(req.method!=="POST") return json({error:"Method not allowed"},405);
   try {
     const { order_id } = await req.json();
-    if(!order_id) return json({error:"Nomor transaksi tidak ditemukan."},400);
+    if(!order_id || typeof order_id !== "string" || !/^LF-[0-9a-f-]{36}$/i.test(order_id)) return json({error:"Nomor transaksi tidak valid."},400);
     const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const {data,error}=await db.from("bookings")
-      .select("booking_code,customer_phone,payment_status,status,total_price,booking_date,start_time,duration_hours,courts(name)")
-      .eq("booking_code",String(booking_code)).single();
-    if(error || !data || String(data.customer_phone).replace(/\D/g,"")!==String(customer_phone).replace(/\D/g,"")) return json({error:"Data booking tidak ditemukan."},404);
+      .select("booking_code,payment_status,status,total_price,booking_date,start_time,duration_hours,courts(name)")
+      .eq("payment_order_id",order_id).single();
+    if(error || !data) return json({error:"Data transaksi tidak ditemukan."},404);
     return json({booking_code:data.booking_code,payment_status:data.payment_status,status:data.status,total_price:data.total_price,booking_date:data.booking_date,start_time:data.start_time,duration_hours:data.duration_hours,court_name:data.courts?.name || "Lapangan"});
   } catch { return json({error:"Tidak dapat memeriksa status pembayaran."},500); }
 });
