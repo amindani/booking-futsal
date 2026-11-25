@@ -43,9 +43,22 @@ export default function AdminDashboard({ onBack, onNotice }) {
     if (error) setError(error.message); else { onNotice("Lapangan dinonaktifkan."); load(); }
   };
 
-  const updateCourt = async (court, patch) => {\n    const { error } = await supabase.from("courts").update(patch).eq("id", court.id);\n    if (error) setError(error.message); else { onNotice("Status lapangan diperbarui."); load(); }\n  };\n\n  const updateBooking = async (booking, patch) => {
+  const updateCourt = async (court, patch) => {
+    const { error } = await supabase.from("courts").update(patch).eq("id", court.id);
+    if (error) setError(error.message);
+    else {
+      onNotice("Status lapangan diperbarui.");
+      load();
+    }
+  };
+
+  const updateBooking = async (booking, patch) => {
     const { error } = await supabase.from("bookings").update(patch).eq("id", booking.id);
-    if (error) setError(error.message); else { onNotice("Status booking diperbarui."); load(); }
+    if (error) setError(error.message);
+    else {
+      onNotice("Status booking diperbarui.");
+      load();
+    }
   };
 
   return <main className="admin-page">
