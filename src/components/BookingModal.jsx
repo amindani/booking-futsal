@@ -53,8 +53,8 @@ export default function BookingModal({ court, onClose, onSubmit, user }) {
           <label>Durasi<select name="duration" value={form.duration} onChange={change}><option value="1">1 jam</option><option value="2">2 jam</option><option value="3">3 jam</option></select></label>
           <div className="price-line"><span>Estimasi biaya</span><b>{money(total)}</b></div>
           {error && <p className="form-error">{error}</p>}
-          <button className="btn btn-green full" type="submit" disabled={busy}>{busy ? "Memproses..." : "Konfirmasi Booking"} <ArrowRight size={15} /></button>
-          <small className="form-note">Booking tersimpan ke database. Pembayaran online belum tersedia.</small>
+          <button className="btn btn-green full" type="submit" disabled={busy}>{busy ? "Menyiapkan pembayaran..." : "Lanjut ke Pembayaran"} <ArrowRight size={15} /></button>
+          <small className="form-note">Tidak perlu login. Setelah data booking dikirim, kamu akan diarahkan ke halaman pembayaran Midtrans yang aman.</small>
         </form>
       </section>
     </div>
