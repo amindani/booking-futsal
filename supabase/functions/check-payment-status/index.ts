@@ -8,8 +8,8 @@ Deno.serve(async req=>{
   if(req.method==="OPTIONS") return new Response("ok",{headers:cors});
   if(req.method!=="POST") return json({error:"Method not allowed"},405);
   try {
-    const { booking_code, customer_phone } = await req.json();
-    if(!booking_code || !customer_phone) return json({error:"Kode booking dan nomor WhatsApp diperlukan."},400);
+    const { order_id } = await req.json();
+    if(!order_id) return json({error:"Nomor transaksi tidak ditemukan."},400);
     const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const {data,error}=await db.from("bookings")
       .select("booking_code,customer_phone,payment_status,status,total_price,booking_date,start_time,duration_hours,courts(name)")
